@@ -1,0 +1,20 @@
+name: Create Comment
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-comment:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create comment
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+              Thank you for your feedback and suggestions. Please note that the author might only respond on weekends, so we kindly ask for your patience and understanding.

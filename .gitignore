@@ -1,0 +1,11 @@
+node_modules
+dist
+packages
+.webpack
+out
+.vscode
+yarn-error.log
+yarn.lock
+
+_github assets
+*.db

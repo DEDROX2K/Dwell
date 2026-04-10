@@ -1,0 +1,191 @@
+.imgCont {
+    width: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    // align-items: center;
+
+    // for original size image
+    overflow-x: unset;
+
+    // overflow: auto;
+    --varWidth: 100%;
+    --gapSize: 10px;
+
+    --blend-bg: rgba(0, 0, 0, 0);
+    --blend-mode: normal;
+    --hue: 0;
+    --saturation: 1;
+    --brightness: 1;
+    --contrast: 1;
+    &.customColorFilter {
+        background-color: var(--blend-bg);
+        .row {
+            background-color: var(--blend-bg);
+            .readerImg {
+                mix-blend-mode: var(--blend-mode);
+                filter: hue-rotate(calc(var(--hue) * 1deg)) brightness(var(--brightness))
+                    saturate(var(--saturation)) contrast(var(--contrast));
+            }
+        }
+    }
+    --invert: 0;
+    --grayscale: 0;
+    filter: invert(var(--invert)) grayscale(var(--grayscale));
+    &.invertImage {
+        --invert: 1;
+    }
+    &.grayscale {
+        --grayscale: 1;
+    }
+
+    &.readerMode1n2 {
+        justify-content: center;
+        min-height: 100%;
+    }
+
+    &.fitVertically .row {
+        width: 100%;
+        .readerImg {
+            width: auto !important;
+            height: var(--body-height);
+        }
+    }
+    &.fitHorizontally {
+        .row {
+            width: 100%;
+            .readerImg {
+                width: 100%;
+                height: auto !important;
+            }
+            &.twoPagePerRow {
+                &.wide {
+                    .readerImg {
+                        width: 100% !important;
+                        height: auto !important;
+                    }
+                }
+                .readerImg {
+                    width: 50% !important;
+                    height: auto !important;
+                }
+            }
+        }
+    }
+    &.original .row {
+        width: 100%;
+        .readerImg {
+            width: auto !important;
+            height: auto !important;
+        }
+    }
+
+    &.gap {
+        gap: var(--gapSize);
+    }
+
+    .row {
+        display: flex;
+        justify-content: center;
+        width: calc(100% + calc(max(0%, calc(var(--varWidth) - 100%))));
+        --max-width: 100%;
+        --max-height: auto;
+        transform: translate3d(0, 0, 0);
+
+        &.ltr {
+            flex-direction: row;
+        }
+
+        &.rtl {
+            flex-direction: row-reverse;
+        }
+        &.wide {
+            width: calc((100% + calc(max(0%, calc((var(--varWidth) * 2) - 100%)))));
+            .readerImg {
+                width: calc(var(--varWidth) * 2);
+                max-width: min(100%, var(--max-width));
+            }
+        }
+        .readerImg,
+        .loadingIndicator {
+            max-height: var(--max-height);
+            width: var(--varWidth);
+            max-width: var(--max-width);
+            transform: translate3d(0, 0, 0);
+        }
+        .readerImg {
+            image-orientation: none;
+            opacity: 1;
+            &[data-loading="true"] {
+                display: none;
+                // opacity: 0;
+                transition: opacity 0.3s ease;
+                + .loadingIndicator {
+                    display: grid;
+                }
+            }
+
+            + .loadingIndicator {
+                @keyframes loading {
+                    0% {
+                        opacity: 0.3;
+                    }
+                    100% {
+                        opacity: 1;
+                    }
+                }
+                aspect-ratio: 2/3;
+                height: auto;
+                display: none;
+                place-items: center;
+                min-height: 50vh;
+                border: 1px solid gray;
+                font-size: 20px;
+                font-weight: bold;
+                text-align: center;
+                vertical-align: middle;
+                text-justify: center;
+                animation: loading 1s linear infinite alternate;
+            }
+        }
+        //todo check if it is even needed
+        &.widthClamped {
+            max-width: 100%;
+            .readerImg,
+            .loadingIndicator {
+                max-width: 100%;
+            }
+        }
+        &.twoPagePerRow {
+            width: calc((100% + calc(max(0%, calc(var(--varWidth) - 100%))) * 1));
+            .readerImg,
+            .loadingIndicator {
+                width: calc(var(--varWidth) / 2);
+                max-width: min(50%, calc(var(--max-width) / 2));
+            }
+            &.wide {
+                .readerImg,
+                .loadingIndicator {
+                    width: var(--varWidth);
+                    max-width: min(100%, var(--max-width));
+                }
+            }
+
+            &.widthClamped {
+                .readerImg,
+                .loadingIndicator {
+                    max-width: 50%;
+                    // width: calc(var(--varWidth) / 2);
+                }
+
+                &.wide {
+                    .readerImg,
+                    .loadingIndicator {
+                        max-width: 100%;
+                        // width: var(--varWidth);
+                    }
+                }
+            }
+        }
+    }
+}
