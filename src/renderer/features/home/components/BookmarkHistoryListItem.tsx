@@ -7,6 +7,8 @@ import { dialogUtils } from "@utils/dialog";
 import { formatUtils } from "@utils/file";
 import { useAppContext } from "src/renderer/App";
 import ListItem from "../../../components/ListItem";
+import { getHomePreview } from "../utils/homePreview";
+import HomeItemPreview from "./HomeItemPreview";
 
 const BookmarkHistoryListItem: React.FC<{
     focused: boolean;
@@ -34,6 +36,11 @@ const BookmarkHistoryListItem: React.FC<{
               ? libraryItem.link
               : libraryItem.progress?.chapterLink;
     if (!link) return <p>Error: Link not found</p>;
+    const preview = getHomePreview({
+        link: libraryItem.link,
+        isDirectory: libraryItem.type === "manga",
+        libraryItem,
+    });
 
     const title = props.isHistory
         ? libraryItem.type === "book"
@@ -63,7 +70,7 @@ const BookmarkHistoryListItem: React.FC<{
             dialogUtils
                 .confirm({
                     type: "error",
-                    message: "File/folder does not exit. Remove item from library?",
+                    message: "File/folder does not exist. Remove item from library?",
                     noOption: false,
                     defaultId: 0,
                     cancelId: 1,
@@ -121,7 +128,7 @@ const BookmarkHistoryListItem: React.FC<{
             window.contextMenu.template.showInExplorer(link),
             window.contextMenu.template.copyPath(link),
             {
-                label: "Bookmark",
+                label: "Save Bookmark",
                 action() {
                     const type = formatUtils.book.test(link) ? "book" : "manga";
                     if (type === "book" && libraryItem.progress && "chapterId" in libraryItem.progress) {
@@ -190,7 +197,10 @@ const BookmarkHistoryListItem: React.FC<{
         >
             {libraryItem.type === "book" ? (
                 <span className="double">
-                    <span className="text">{libraryItem.title}</span>
+                    <span className="itemPrimary">
+                        <HomeItemPreview preview={preview} title={libraryItem.title} />
+                        <span className="text">{libraryItem.title}</span>
+                    </span>
                     <span className="chapter">
                         <span className="text">
                             {props.bookmark?.chapterName || libraryItem.progress?.chapterName || "~"}
@@ -203,7 +213,10 @@ const BookmarkHistoryListItem: React.FC<{
                 </span>
             ) : (
                 <span className="double">
-                    <span className="text">{libraryItem.title}</span>
+                    <span className="itemPrimary">
+                        <HomeItemPreview preview={preview} title={libraryItem.title} />
+                        <span className="text">{libraryItem.title}</span>
+                    </span>
                     <span className="chapter">
                         <span className="text">
                             {formatUtils.files.getName(

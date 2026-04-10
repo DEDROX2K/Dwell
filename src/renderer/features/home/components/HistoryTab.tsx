@@ -8,6 +8,7 @@ import { formatUtils } from "@utils/file";
 import { useMemo } from "react";
 import { useAppContext } from "src/renderer/App";
 import BookmarkHistoryListItem from "./BookmarkHistoryListItem";
+import HomeViewToggle from "./HomeViewToggle";
 
 const HistoryTab: React.FC = () => {
     const library = useAppSelector((store) => store.library);
@@ -78,18 +79,19 @@ const HistoryTab: React.FC = () => {
     return (
         <div className="contTab listCont" id="historyTab">
             <h2>Continue Reading</h2>
+            <p className="sectionIntro">Jump back into recently opened books and chapters.</p>
 
             <ListNavigator.Provider
                 items={historyItems}
                 filterFn={filterHistoryItem}
                 renderItem={renderHistoryItem}
-                emptyMessage="Library Empty"
+                emptyMessage="No recent reading yet. Open a local book to get started."
                 onContextMenu={(elem) => elem.dispatchEvent(window.contextMenu.fakeEvent(elem))}
                 onSelect={(elem) => elem.click()}
             >
-                {appSettings.showSearch && (
-                    <div className="tools">
-                        <div className="row1">
+                <div className="tools">
+                    <div className="row1">
+                        {appSettings.showSearch && (
                             <button
                                 data-tooltip={
                                     "Sort: " +
@@ -155,11 +157,12 @@ const HistoryTab: React.FC = () => {
                             >
                                 <FontAwesomeIcon icon={faSort} />
                             </button>
-                            <ListNavigator.SearchInput />
-                        </div>
+                        )}
+                        <HomeViewToggle />
+                        {appSettings.showSearch && <ListNavigator.SearchInput />}
                     </div>
-                )}
-                <div className="location-cont">
+                </div>
+                <div className={`location-cont home-view-${appSettings.homeViewMode}`}>
                     <ListNavigator.List />
                 </div>
             </ListNavigator.Provider>

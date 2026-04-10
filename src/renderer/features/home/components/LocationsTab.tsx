@@ -9,6 +9,7 @@ import { createRendererLogger } from "@utils/logger";
 import { type ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppContext } from "src/renderer/App";
 import ListNavigator from "../../../components/ListNavigator";
+import HomeViewToggle from "./HomeViewToggle";
 
 const log = createRendererLogger("home/LocationsTab");
 
@@ -276,9 +277,13 @@ const LocationsTab = (): ReactElement => {
                 onContextMenu={handleContextMenu}
                 handleExtraKeyDown={handleKeyDown}
                 onSelect={handleSelect}
-                emptyMessage="No folders found"
+                emptyMessage="No readable folders or supported files found here."
             >
-                <h2>Location</h2>
+                <h2>Local Library</h2>
+                <p className="sectionIntro">
+                    Browse local folders and open supported files. Items marked <code>LIB</code> are already in
+                    your Dwell library.
+                </p>
                 <div className="tools">
                     <div className="row1">
                         <button
@@ -355,6 +360,7 @@ const LocationsTab = (): ReactElement => {
                         >
                             <FontAwesomeIcon icon={faAngleUp} />
                         </button>
+                        <HomeViewToggle />
                         <ListNavigator.SearchInput runOriginalOnChange={true} onChange={handleOnChange} />
                     </div>
                     <div className="currentPath">
@@ -363,17 +369,17 @@ const LocationsTab = (): ReactElement => {
                             disabled={imageCount <= 0}
                             onClick={() => openInReader(currentLink)}
                         >
-                            Open
+                            Open Here
                         </button>
                         <span>{currentLink}</span>
                         <span>{`${locations.length} items • ${imageCount} images • ${inLibraryCount} in library`}</span>
                     </div>
                 </div>
-                <div className="location-cont" ref={locationContRef}>
+                <div className={`location-cont home-view-${appSettings.homeViewMode}`} ref={locationContRef}>
                     {isLoadingFile ? (
                         <p>Loading...</p>
                     ) : locations.length === 0 ? (
-                        <p>0 Folders, {imageCount} Images</p>
+                        <p>No folders found in this location. {imageCount} direct image file(s) available.</p>
                     ) : (
                         <ListNavigator.List />
                     )}

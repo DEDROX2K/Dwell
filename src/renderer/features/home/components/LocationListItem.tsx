@@ -4,6 +4,8 @@ import { formatUtils } from "@utils/file";
 import type { ReactElement } from "react";
 import { useAppContext } from "src/renderer/App";
 import ListItem from "../../../components/ListItem";
+import { getHomePreview } from "../utils/homePreview";
+import HomeItemPreview from "./HomeItemPreview";
 
 const LocationListItem = ({
     name,
@@ -24,6 +26,18 @@ const LocationListItem = ({
 }): ReactElement => {
     const { openInReader } = useAppContext();
     const appSettings = useAppSelector((store) => store.appSettings);
+    const libraryItem = useAppSelector((store) => {
+        const direct = store.library.items[link];
+        if (direct) return direct;
+        if (!formatUtils.files.test(link)) return null;
+        if (formatUtils.book.test(link)) return null;
+        return store.library.items[window.path.dirname(link)] ?? null;
+    });
+    const preview = getHomePreview({
+        link,
+        isDirectory: !formatUtils.files.test(name),
+        libraryItem,
+    });
 
     const onClickHandle = () => {
         if (!window.fs.existsSync(link)) {
@@ -78,7 +92,10 @@ const LocationListItem = ({
             onContextMenu={handleContextMenu}
             title={name}
         >
-            <span className="text">{formatUtils.files.getName(name)}</span>
+            <span className="itemPrimary">
+                <HomeItemPreview preview={preview} title={name} />
+                <span className="text">{formatUtils.files.getName(name)}</span>
+            </span>
             {formatUtils.files.test(name) && <code className="nonFolder">{formatUtils.files.getExt(name)}</code>}
             {!formatUtils.files.test(name) && inLibrary && <code className="nonFolder">LIB</code>}
         </ListItem>

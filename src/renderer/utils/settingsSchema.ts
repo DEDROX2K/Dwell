@@ -17,6 +17,7 @@ const log = createRendererLogger("settingsSchema");
 
 const sortTypeEnum = z.union([z.literal("normal"), z.literal("inverse")]);
 const sortByEnum = z.union([z.literal("name"), z.literal("date")]);
+const homeViewModeEnum = z.union([z.literal("list"), z.literal("grid")]);
 
 const settingSchema = z
     .object({
@@ -66,6 +67,7 @@ const settingSchema = z
 
         showPageCountInSideList: z.boolean(),
         showTextFileBadge: z.boolean(),
+        homeViewMode: homeViewModeEnum,
 
         //styles end
 
@@ -105,6 +107,7 @@ const settingSchema = z
         confirmDeleteItem: true,
         showPageCountInSideList: true,
         showTextFileBadge: true,
+        homeViewMode: "list",
         readerSettings: defaultMangaReaderSettings,
         epubReaderSettings: defaultBookReaderSettings,
         mangaReaderPresetId: USER_PRESET_MANGA_ID,
